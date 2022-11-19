@@ -1,5 +1,5 @@
 - name: backup_list {{ docker_container_traefik_volume_dir }}
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_repo }}"
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -8,6 +8,6 @@
   register: backup_list_result
   
 - name: backup_list debug 
-  debug:
+  ansible.builtin.debug:
     msg: "{{ backup_list_result.stdout }}"
   

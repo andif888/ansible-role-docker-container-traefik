@@ -16,7 +16,7 @@
     - docker_container_info_result.container.State.Running
 
 - name: backup {{ docker_container_traefik_volume_dir }}
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_repo }}"
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -27,7 +27,7 @@
     - docker_container_info_result.exists
 
 - name: backup - debug
-  debug:
+  ansible.builtin.debug:
     msg: '{{ backup_result.stdout }}'
   when:
     - backup_result is defined
@@ -41,7 +41,7 @@
     - docker_container_info_result.container.State.Running
 
 - name: backup_retention {{ docker_container_traefik_volume_dir }}
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_repo }}"
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -54,7 +54,7 @@
     - docker_container_info_result.exists
 
 - name: backup_retention - debug
-  debug:
+  ansible.builtin.debug:
     msg: '{{ rentention_result.stdout }}'
   when:
     - rentention_result is defined

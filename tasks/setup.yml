@@ -2,7 +2,7 @@
 # tasks file for ansible-role-docker-container-traefik
 
 - name: docker_container - {{ docker_container_traefik_volume_dir }}
-  file:
+  ansible.builtin.file:
     path: "{{ docker_container_traefik_volume_dir }}/{{ item }}"
     state: directory
   loop:
@@ -29,7 +29,7 @@
     - docker_container_traefik_static_certificates | length > 0
 
 - name: docker_container {{ docker_container_traefik_name }} - traefik.providers.file.toml
-  template:
+  ansible.builtin.template:
     src: templates/traefik.providers.file.toml.j2
     dest: "{{ docker_container_traefik_volume_dir }}/config/traefik.providers.file.toml"
 

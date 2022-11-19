@@ -1,6 +1,6 @@
 ---
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - Ensure S3 bucket exists
-  shell: |
+  ansible.builtin.shell: |
     mc alias set localminio {{ docker_container_traefik_restic_s3_endpoint }} {{ docker_container_traefik_restic_s3_repo_access_key }} {{ docker_container_traefik_restic_s3_repo_secret_key }}
     mc mb --ignore-existing localminio/{{ docker_container_traefik_restic_s3_bucket_name }}     
   register: mc_mb_result
@@ -11,7 +11,7 @@
 
 # using localhost here because DNS is not fully populated at this time
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - Check repo exists
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_repo }}"
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -22,7 +22,7 @@
   changed_when: false
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - Init repo with seeding repo
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_repo }}"
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -36,7 +36,7 @@
     - docker_container_traefik_restic_s3_seed_repo_password is defined
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - Seed repo with seeding repo
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_seed_repo }}"      
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -50,7 +50,7 @@
     - docker_container_traefik_restic_s3_seed_repo_password is defined
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - Init empty repo
-  shell: |
+  ansible.builtin.shell: |
     export RESTIC_REPOSITORY="{{ docker_container_traefik_restic_s3_repo }}"
     export AWS_ACCESS_KEY_ID="{{ docker_container_traefik_restic_s3_repo_access_key }}"
     export AWS_SECRET_ACCESS_KEY="{{ docker_container_traefik_restic_s3_repo_secret_key }}"
@@ -62,22 +62,22 @@
     - (not restic_init is defined) or (restic_init.skipped)
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - restic_init
-  debug:
+  ansible.builtin.debug:
     var: restic_init
   when: restic_init is defined
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - restic_seeded
-  debug:
+  ansible.builtin.debug:
     var: restic_seeded
   when: restic_seeded is defined
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - restic_init_empty
-  debug:
+  ansible.builtin.debug:
     var: restic_init_empty
   when: restic_init_empty is defined
 
 - name: backup_init {{ docker_container_traefik_restic_s3_repo }} - Seed time
-  debug:
+  ansible.builtin.debug:
     msg: "Start {{ restic_seeded.start }} End {{ restic_seeded.end }} Delta {{ restic_seeded.delta }}"
   when: 
     - restic_seeded is defined
