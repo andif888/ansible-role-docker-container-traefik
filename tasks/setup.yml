@@ -1,0 +1,85 @@
+---
+# tasks file for ansible-role-docker-container-traefik
+
+- name: docker_container - {{ docker_container_traefik_volume_dir }}
+  file:
+    path: "{{ docker_container_traefik_volume_dir }}/{{ item }}"
+    state: directory
+  loop:
+    - "config"
+    - "certs"
+
+- name: docker_container {{ docker_container_traefik_name }} - static certs 
+  ansible.builtin.copy:
+    src: '{{ item.cert_file }}'
+    dest: '{{ docker_container_traefik_volume_dir }}/certs/{{ item.cert_file | basename }}'
+  loop: '{{ docker_container_traefik_static_certificates }}'
+  when: 
+    - docker_container_traefik_static_certificates is defined
+    - docker_container_traefik_static_certificates | length > 0
+
+- name: docker_container {{ docker_container_traefik_name }} - static cert keys
+  ansible.builtin.copy:
+    src: '{{ item.key_file }}'
+    dest: '{{ docker_container_traefik_volume_dir }}/certs/{{ item.key_file | basename }}'
+    mode: "0600"
+  loop: '{{ docker_container_traefik_static_certificates }}'
+  when: 
+    - docker_container_traefik_static_certificates is defined
+    - docker_container_traefik_static_certificates | length > 0
+
+- name: docker_container {{ docker_container_traefik_name }} - traefik.providers.file.toml
+  template:
+    src: templates/traefik.providers.file.toml.j2
+    dest: "{{ docker_container_traefik_volume_dir }}/config/traefik.providers.file.toml"
+
+- name: docker_image pull {{ docker_image_traefik_name }}
+  community.docker.docker_image:
+    name: '{{ docker_image_traefik_name }}'
+    source: pull
+    # Select platform for pulling. If not specified, will pull whatever docker prefers.
+    pull:
+      platform: amd64
+  when: 
+    - docker_image_traefik_pull is defined
+
+- name: docker_network {{ docker_container_traefik_name }}
+  community.docker.docker_network:
+    ipam_config: "{{ docker_network_traefik_ipam_config | default(omit) }}"
+    name: "{{ docker_network_traefik_name }}"
+    driver: "{{ docker_network_traefik_driver | default('bridge') }}"
+    attachable: "{{ docker_network_traefik_attachable | default('yes') }}"
+    enable_ipv6: "{{ docker_network_traefik_enable_ipv6 | default('no') }}"
+    internal: "{{ docker_network_traefik_internal | default('no') }}"
+    state: present
+
+
+- name: docker_container {{ docker_container_traefik_name }}
+  community.docker.docker_container:
+    name: "{{ docker_container_traefik_name }}"
+    image: "{{ docker_container_traefik_image }}"
+    state: "{{ docker_container_traefik_state | default('started') }}"
+    recreate: "{{ docker_container_traefik_recreate | default('no') }}"
+    restart: "{{ docker_container_traefik_restart | default('no') }}"
+    restart_policy: "{{ docker_container_traefik_restart_policy | default('always') }}"
+    container_default_behavior: no_defaults
+    auto_remove: "{{ docker_container_traefik_auto_remove | default('no') }}"
+    detach: "{{ docker_container_traefik_detach | default('yes') }}"
+    init: "{{ docker_container_traefik_init | default('no') }}"
+    interactive: "{{ docker_container_traefik_interactive | default('no') }}"
+    keep_volumes: "{{ docker_container_traefik_keep_volumes | default('yes') }}"
+    memory: "{{ docker_container_traefik_memory | default('0') }}"
+    paused: "{{ docker_container_traefik_paused | default('no') }}"
+    privileged: "{{ docker_container_traefik_privileged | default('no') }}"
+    read_only: "{{ docker_container_traefik_read_only | default('no') }}"
+    tty: "{{ docker_container_traefik_tty | default('no') }}"
+    env_file: "{{ docker_container_traefik_env_file | default(omit) }}"
+    env: "{{ docker_container_traefik_env | default(omit) }}"
+    volumes: "{{ docker_container_traefik_volumes | default(omit) }}"
+    labels: "{{ docker_container_traefik_labels | default(omit) }}"
+    networks_cli_compatible: "{{ docker_container_traefik_networks_cli_compatible | default('yes') }}"
+    network_mode: "{{ docker_network_traefik_name }}"
+    pull: "{{ docker_container_traefik_pull | default('no') }}"
+    purge_networks: "{{ docker_container_traefik_purge_networks | default('yes') }}"
+    networks: "{{ docker_container_traefik_networks }}"
+    published_ports: "{{ docker_container_traefik_ports | default(omit) }}"

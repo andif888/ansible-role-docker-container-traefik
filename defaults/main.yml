@@ -1,0 +1,227 @@
+---
+# defaults file for ansible-role-docker-container-traefik
+
+# ------------
+# Docker image
+# ------------
+
+# @var docker_image_traefik_name:description: Repository path and tag for the container image.
+docker_image_traefik_name: "traefik:v2.9"
+
+# @var docker_image_traefik_pull:description: Indicate to always pull the docker image.
+docker_image_traefik_pull: no
+
+# ----------------
+# Docker container
+# ----------------
+
+# @var docker_container_traefik_name:description: Name for the container
+docker_container_traefik_name: "traefik"
+
+# @var docker_container_traefik_image:description: >
+# Repository path and tag used to create the container. 
+# If an image is not found or pull is true, the image will be pulled from the registry. 
+# If no tag is included, latest will be used.
+# @end
+docker_container_traefik_image: "{{ docker_image_traefik_name }}"
+
+# @var docker_container_traefik_volume_dir:description: >
+# Volume mount host directory, where Treafik config files are stored.
+# @end
+docker_container_traefik_volume_dir: "{{ docker_container__base__volume_dir }}/{{ docker_container_traefik_name }}"
+
+# @var docker_container_traefik_env:description: >
+# Dictionery of key,value pairs for docker 
+# environment variables to configure Traefik. 
+# https://doc.traefik.io/traefik/reference/static-configuration/env/
+# @end
+docker_container_traefik_env:
+  TRAEFIK_API: "true"
+  TRAEFIK_API_DASHBOARD: "true"
+  TRAEFIK_API_INSECURE: "true"
+  # TRAEFIK_CERTIFICATESRESOLVERS_LE: "true"
+  # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_CASERVER: https://acme-staging-v02.api.letsencrypt.org/directory   # Uncomment for using Letsencrypt staging server (Info at https://letsencrypt.org/docs/staging-environment/)
+  # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_EMAIL: "{{ docker_container_traefik_le_acme_email }}"
+  # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_HTTPCHALLENGE: "true"
+  # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_HTTPCHALLENGE_ENTRYPOINT: http
+  # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_STORAGE: "/letsencrypt/acme.json"
+  TRAEFIK_ENTRYPOINTS_HTTP: "true"
+  TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS: ":80"
+  # TRAEFIK_ENTRYPOINTS_HTTP_PROXYPROTOCOL_TRUSTEDIPS: "{{ docker_container_traefik_entrypoints_trustedips }}"
+  TRAEFIK_ENTRYPOINTS_HTTPS: "true"
+  TRAEFIK_ENTRYPOINTS_HTTPS_ADDRESS: ":443"
+  # TRAEFIK_ENTRYPOINTS_HTTPS_PROXYPROTOCOL_TRUSTEDIPS: "{{ docker_container_traefik_entrypoints_trustedips }}"
+  TRAEFIK_GLOBAL_CHECKNEWVERSION: "false"
+  TRAEFIK_GLOBAL_SENDANONYMOUSUSAGE: "false"
+  TRAEFIK_LOG: "true"
+  TRAEFIK_LOG_LEVEL: INFO
+  TRAEFIK_PROVIDERS_DOCKER: "true"
+  TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
+  TRAEFIK_PROVIDERS_DOCKER_NETWORK: "{{ docker_network_traefik_name }}"
+  TRAEFIK_PROVIDERS_FILE_FILENAME: /etc/traefik/traefik.providers.file.toml
+  TRAEFIK_PROVIDERS_FILE_WATCH: "true"
+  TRAEFIK_METRICS_PROMETHEUS: "true"
+
+# @var docker_container_traefik_volumes:description: >
+# List of volumes to mount within the container.
+# @end
+docker_container_traefik_volumes:
+  - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  - "{{ docker_container_traefik_volume_dir }}/config:/etc/traefik"
+  - "{{ docker_container_traefik_volume_dir }}/letsencrypt:/letsencrypt"
+  - "{{ docker_container_traefik_volume_dir }}/certs:/certs"
+
+# @var docker_container_traefik_labels:description: >
+# Dictionary of key value pairs for container labels. 
+# 
+# Example:
+#
+# ```yaml
+# 
+# docker_container_traefik_labels:
+#
+#   traefik.enable: "true"
+# 
+# ```
+# 
+# @end
+docker_container_traefik_labels: {}
+
+# @var docker_container_traefik_networks:description: >
+# List of networks the container belongs to.
+# @end
+docker_container_traefik_networks:
+  - name: "{{ docker_network_traefik_name }}"
+
+# @var docker_container_traefik_ports:description: >
+# List of ports to publish from the container to the host.
+# @end
+docker_container_traefik_ports:
+  - "80:80"
+  - "443:443"
+  - "8088:8080"
+
+# docker_container_traefik_auto_remove: no 
+# docker_container_traefik_detach: yes 
+# docker_container_traefik_env_file: "{{ docker_container_traefik_volume_dir }}/.env"
+# docker_container_traefik_init: no 
+# docker_container_traefik_interactive: no 
+# docker_container_traefik_keep_volumes: yes
+# docker_container_traefik_memory: "0"
+# docker_container_traefik_paused: no 
+# docker_container_traefik_privileged: no 
+# docker_container_traefik_pull: no
+# docker_container_traefik_purge_networks: yes 
+# docker_container_traefik_read_only: no 
+# docker_container_traefik_recreate: no
+# docker_container_traefik_restart: no
+# docker_container_traefik_restart_policy: always 
+# docker_container_traefik_state: started
+# docker_container_traefik_tty: no 
+# docker_container_traefik_networks_cli_compatible: yes 
+
+# @var docker_container_traefik_static_certificates:description: >
+# Static certificates used by Traefik.
+#
+# Example:
+# 
+# ```yaml
+#
+# docker_container_traefik_static_certificates: 
+#
+#   - { cert_file: "files/acme1_org.cer", key_file: "files/acme1_org.pem" } 
+#
+#   - { cert_file: "files/acme2_org.cer", key_file: "files/acme1_org.pem" }
+#
+# ```
+#
+# @end
+docker_container_traefik_static_certificates: []
+
+# --------------
+# Docker network
+# --------------
+
+# @var docker_network_traefik_name:description: >
+# Name of the docker network created for Traefik.
+# @end
+docker_network_traefik_name: "{{ docker_container_traefik_name }}_backend"
+
+# docker_network_traefik_ipam_config_subnet: "{{ docker_host_subnet_base | ansible.utils.ipsubnet(24, 7) }}"
+# docker_network_traefik_ipam_config_gateway: "{{ docker_network_traefik_ipam_config_subnet | ansible.utils.ipaddr('next_usable') }}"
+# docker_network_traefik_ipam_config:
+#   - subnet: "{{ docker_network_traefik_ipam_config_subnet }}"
+#     gateway: "{{ docker_network_traefik_ipam_config_gateway }}"
+# docker_network_traefik_driver: bridge
+# docker_network_traefik_attachable: yes
+# docker_network_traefik_enable_ipv6: no
+# docker_network_traefik_internal: no
+
+# -------------
+# Restic Backup
+# -------------
+
+# @var docker_container_traefik_restic_enable:description: >
+# Enable restic backup for the container's mounted volumes.
+# @end
+docker_container_traefik_restic_enable: false
+
+# @var docker_container_traefik_restic_s3_endpoint:description: >
+# Minio S3 endpoint for restic backup storage.
+#
+# Example: 
+# 
+# ```yaml
+#
+# docker_container__base__restic_s3_endpoint: "https://minio.{{ dns_domain }}"
+#
+# docker_container_traefik_restic_s3_endpoint: "{{ docker_container__base__restic_s3_endpoint }}"
+#
+# ```
+#
+# @end
+docker_container_traefik_restic_s3_endpoint: "{{ docker_container__base__restic_s3_endpoint }}"
+
+# @var docker_container_traefik_restic_s3_bucket_name:description: >
+# Minio S3 bucket name for restic backup storage.
+# @end
+docker_container_traefik_restic_s3_bucket_name: "restic-{{ docker_container_traefik_name }}"
+
+# @var docker_container_traefik_restic_s3_repo:description: >
+# Minio S3 repo URL for restic backup storage.
+# @end
+docker_container_traefik_restic_s3_repo: "s3:{{ docker_container_traefik_restic_s3_endpoint }}/{{ docker_container_traefik_restic_s3_bucket_name }}"
+
+# @var docker_container_traefik_restic_s3_repo_password:description: >
+# Minio S3 repo password for restic backup storage.
+# @end
+docker_container_traefik_restic_s3_repo_password: "{{ docker_container__base__restic_s3_repo_password }}"
+
+# @var docker_container_traefik_restic_s3_repo_access_key:description: >
+# Minio S3 repo access key for restic backup storage.
+# @end
+docker_container_traefik_restic_s3_repo_access_key: "{{ docker_container__base__restic_s3_repo_access_key }}"
+
+# @var docker_container_traefik_restic_s3_repo_secret_key:description: >
+# Minio S3 repo secret key for restic backup storage.
+# @end
+docker_container_traefik_restic_s3_repo_secret_key: "{{ docker_container__base__restic_s3_repo_secret_key }}"
+
+# docker_container_traefik_restic_s3_seed_repo: "s3:{{ docker_container__base__restic_s3_seed_endpoint }}/{{ docker_container_traefik_restic_s3_bucket_name }}"
+# docker_container_traefik_restic_s3_seed_repo_password: "{{ docker_container__base__restic_s3_repo_password }}"
+
+# @var docker_container_traefik_restic_retention:description: >
+# Retention settions for `restic forget` after the `restic backup`.
+# @end
+docker_container_traefik_restic_retention:
+  keep_last: 1
+  # keep_hourly: 1
+  keep_daily: 7
+  keep_weekly: 4
+  # keep_monthly: 6
+  # keep_yearly
+
+# @var docker_container_traefik_restic_tag:description: >
+# Tag for the `restic backup` command
+# @end
+docker_container_traefik_restic_tag: "{{ docker_container_traefik_name }}"

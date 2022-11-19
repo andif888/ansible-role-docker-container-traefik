@@ -1,0 +1,50 @@
+# http routing section
+[http]
+
+  [http.middlewares]
+    [http.middlewares.https_redirect_permanent]
+      [http.middlewares.https_redirect_permanent.redirectScheme]
+        scheme = "https"
+        permanent = true
+
+    [http.middlewares.hsts]
+      [http.middlewares.hsts.headers]
+        stsSeconds = 315360000
+        stsIncludeSubdomains = true
+        # stsPreload = true
+        forceSTSHeader = true
+        contenttypenosniff=true
+        browserXssFilter=true
+        framedeny=true
+
+    [http.middlewares.limit.buffering]
+      maxRequestBodyBytes = 107374182400
+      maxResponseBodyBytes = 107374182400
+      
+[tls]
+{% if (docker_container_traefik_static_certificates is defined) and (docker_container_traefik_static_certificates | length > 0) %}
+{% for cert in docker_container_traefik_static_certificates %}
+  [[tls.certificates]]
+    certFile = "/certs/{{ cert.cert_file | basename }}"
+    keyFile = "/certs/{{ cert.key_file | basename }}"
+{% endfor %}
+{% endif %}
+
+  [tls.options]
+    [tls.options.default]
+      minVersion = "VersionTLS12"
+      cipherSuites = [
+        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+        "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
+        "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
+      ]
+      sniStrict = true
+    [tls.options.mintls13]
+      minVersion = "VersionTLS13"
+      sniStrict = true
+    [tls.options.nosni]
+      sniStrict = false
+      
