@@ -1,5 +1,41 @@
 ---
 - hosts: localhost
   remote_user: root
+  vars:
+    docker_host_subnet_base: 172.73.0.0/16
+    # split smaller subnets and use the 7th subnet
+    docker_network_traefik_ipam_config_subnet: "{{ docker_host_subnet_base | ansible.utils.ipsubnet(24, 7) }}"
+    docker_network_traefik_ipam_config_gateway: "{{ docker_network_traefik_ipam_config_subnet | ansible.utils.ipaddr('next_usable') }}"
+    docker_network_traefik_ipam_config:
+      - subnet: "{{ docker_network_traefik_ipam_config_subnet }}"
+        gateway: "{{ docker_network_traefik_ipam_config_gateway }}"
+
+    docker_container_traefik_env:
+      TRAEFIK_API: "true"
+      TRAEFIK_API_DASHBOARD: "true"
+      TRAEFIK_API_INSECURE: "true"
+      # TRAEFIK_CERTIFICATESRESOLVERS_LE: "true"
+      # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_CASERVER: https://acme-staging-v02.api.letsencrypt.org/directory   # Uncomment for using Letsencrypt staging server (Info at https://letsencrypt.org/docs/staging-environment/)
+      # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_EMAIL: "{{ docker_container_traefik_le_acme_email }}"
+      # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_HTTPCHALLENGE: "true"
+      # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_HTTPCHALLENGE_ENTRYPOINT: http
+      # TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_STORAGE: "/letsencrypt/acme.json"
+      TRAEFIK_ENTRYPOINTS_HTTP: "true"
+      TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS: ":80"
+      # TRAEFIK_ENTRYPOINTS_HTTP_PROXYPROTOCOL_TRUSTEDIPS: "{{ docker_container_traefik_entrypoints_trustedips }}"
+      TRAEFIK_ENTRYPOINTS_HTTPS: "true"
+      TRAEFIK_ENTRYPOINTS_HTTPS_ADDRESS: ":443"
+      # TRAEFIK_ENTRYPOINTS_HTTPS_PROXYPROTOCOL_TRUSTEDIPS: "{{ docker_container_traefik_entrypoints_trustedips }}"
+      TRAEFIK_GLOBAL_CHECKNEWVERSION: "false"
+      TRAEFIK_GLOBAL_SENDANONYMOUSUSAGE: "false"
+      TRAEFIK_LOG: "true"
+      TRAEFIK_LOG_LEVEL: DEBUG
+      TRAEFIK_PROVIDERS_DOCKER: "true"
+      TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
+      TRAEFIK_PROVIDERS_DOCKER_NETWORK: "{{ docker_network_traefik_name }}"
+      TRAEFIK_PROVIDERS_FILE_FILENAME: /etc/traefik/traefik.providers.file.toml
+      TRAEFIK_PROVIDERS_FILE_WATCH: "true"
+      TRAEFIK_METRICS_PROMETHEUS: "true"
+
   roles:
     - ansible-role-docker-container-traefik
