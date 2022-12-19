@@ -1,6 +1,9 @@
 ---
 # defaults file for ansible-role-docker-container-traefik
 
+# @var docker_container_traefik_provider_config_template:description: Path to provider template file
+docker_container_traefik_provider_config_template: "templates/traefik.providers.file.toml.j2"
+
 # ------------
 # Docker image
 # ------------

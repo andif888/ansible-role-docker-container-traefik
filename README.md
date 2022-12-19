@@ -11,6 +11,7 @@ Role to run Traefik in a docker container
   - [docker_container_traefik_name](#docker_container_traefik_name)
   - [docker_container_traefik_networks](#docker_container_traefik_networks)
   - [docker_container_traefik_ports](#docker_container_traefik_ports)
+  - [docker_container_traefik_provider_config_template](#docker_container_traefik_provider_config_template)
   - [docker_container_traefik_restic_enable](#docker_container_traefik_restic_enable)
   - [docker_container_traefik_restic_retention](#docker_container_traefik_restic_retention)
   - [docker_container_traefik_restic_s3_bucket_name](#docker_container_traefik_restic_s3_bucket_name)
@@ -124,6 +125,16 @@ docker_container_traefik_ports:
   - 80:80
   - 443:443
   - 8088:8080
+```
+
+### docker_container_traefik_provider_config_template
+
+Path to provider template file
+
+#### Default value
+
+```YAML
+docker_container_traefik_provider_config_template: templates/traefik.providers.file.toml.j2
 ```
 
 ### docker_container_traefik_restic_enable
@@ -294,7 +305,7 @@ docker_image_traefik_name: traefik:v2.9
 
 ### docker_image_traefik_pull
 
-Indicate to alway pull the docker image.
+Indicate to always pull the docker image.
 
 #### Default value
 
