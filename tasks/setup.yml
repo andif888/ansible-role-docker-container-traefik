@@ -83,3 +83,12 @@
     purge_networks: "{{ docker_container_traefik_purge_networks | default('yes') }}"
     networks: "{{ docker_container_traefik_networks }}"
     published_ports: "{{ docker_container_traefik_ports | default(omit) }}"
+
+- name: docker_container {{ docker_container_traefik_name }} - Wait until letsencrypt acme.json
+  wait_for:
+    path: "{{ docker_container_traefik_letsencrypt_acme_json_file }}"
+    state: present
+    timeout: 120
+    sleep: 1
+    delay: 2
+  when: docker_container_traefik_letsencrypt_acme_json_wait_for

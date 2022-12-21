@@ -4,6 +4,12 @@
 # @var docker_container_traefik_provider_config_template:description: Path to provider template file
 docker_container_traefik_provider_config_template: "templates/traefik.providers.file.toml.j2"
 
+# @var docker_container_traefik_letsencrypt_acme_json_wait_for:description: Pause setup process until letsencrypt acme.json is created
+docker_container_traefik_letsencrypt_acme_json_wait_for: false
+
+# @var docker_container_traefik_letsencrypt_acme_json_file:description: letsencrypt acme.json file
+docker_container_traefik_letsencrypt_acme_json_file: "{{ docker_container_traefik_volume_dir }}/letsencrypt/acme.json"
+
 # ------------
 # Docker image
 # ------------
@@ -72,7 +78,6 @@ docker_container_traefik_volumes:
   - "/var/run/docker.sock:/var/run/docker.sock:ro"
   - "{{ docker_container_traefik_volume_dir }}/config:/etc/traefik"
   - "{{ docker_container_traefik_volume_dir }}/letsencrypt:/letsencrypt"
-  - "{{ docker_container_traefik_volume_dir }}/certs:/certs"
 
 # @var docker_container_traefik_labels:description: >
 # Dictionary of key value pairs for container labels. 
