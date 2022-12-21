@@ -8,6 +8,8 @@ Role to run Traefik in a docker container
   - [docker_container_traefik_env](#docker_container_traefik_env)
   - [docker_container_traefik_image](#docker_container_traefik_image)
   - [docker_container_traefik_labels](#docker_container_traefik_labels)
+  - [docker_container_traefik_letsencrypt_acme_json_file](#docker_container_traefik_letsencrypt_acme_json_file)
+  - [docker_container_traefik_letsencrypt_acme_json_wait_for](#docker_container_traefik_letsencrypt_acme_json_wait_for)
   - [docker_container_traefik_name](#docker_container_traefik_name)
   - [docker_container_traefik_networks](#docker_container_traefik_networks)
   - [docker_container_traefik_ports](#docker_container_traefik_ports)
@@ -91,6 +93,27 @@ traefik.enable: "true"
 
 ```YAML
 docker_container_traefik_labels: {}
+```
+
+### docker_container_traefik_letsencrypt_acme_json_file
+
+letsencrypt acme.json file
+
+#### Default value
+
+```YAML
+docker_container_traefik_letsencrypt_acme_json_file: '{{ docker_container_traefik_volume_dir
+  }}/letsencrypt/acme.json'
+```
+
+### docker_container_traefik_letsencrypt_acme_json_wait_for
+
+Pause setup process until letsencrypt acme.json is created
+
+#### Default value
+
+```YAML
+docker_container_traefik_letsencrypt_acme_json_wait_for: false
 ```
 
 ### docker_container_traefik_name
@@ -290,7 +313,6 @@ docker_container_traefik_volumes:
   - /var/run/docker.sock:/var/run/docker.sock:ro
   - '{{ docker_container_traefik_volume_dir }}/config:/etc/traefik'
   - '{{ docker_container_traefik_volume_dir }}/letsencrypt:/letsencrypt'
-  - '{{ docker_container_traefik_volume_dir }}/certs:/certs'
 ```
 
 ### docker_image_traefik_name
