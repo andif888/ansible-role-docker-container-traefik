@@ -18,7 +18,7 @@ docker_container_traefik_letsencrypt_acme_json_file: "{{ docker_container_traefi
 docker_image_traefik_name: "traefik:v2.9"
 
 # @var docker_image_traefik_pull:description: Indicate to always pull the docker image.
-docker_image_traefik_pull: no
+docker_image_traefik_pull: false
 
 # ----------------
 # Docker container
