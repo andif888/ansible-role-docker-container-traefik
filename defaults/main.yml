@@ -109,6 +109,15 @@ docker_container_traefik_ports:
   - "443:443"
   - "8088:8080"
 
+# @var docker_container_traefik_comparisons:description: >
+# Allows to specify how properties of existing containers are compared with module options 
+# to decide whether the container should be recreated / updated or not.
+# @end
+docker_container_traefik_comparisons:
+  image: strict
+  env: strict
+  volumes: strict
+
 # docker_container_traefik_auto_remove: no 
 # docker_container_traefik_detach: yes 
 # docker_container_traefik_env_file: "{{ docker_container_traefik_volume_dir }}/.env"
@@ -119,7 +128,6 @@ docker_container_traefik_ports:
 # docker_container_traefik_paused: no 
 # docker_container_traefik_privileged: no 
 # docker_container_traefik_pull: no
-# docker_container_traefik_purge_networks: yes 
 # docker_container_traefik_read_only: no 
 # docker_container_traefik_recreate: no
 # docker_container_traefik_restart: no

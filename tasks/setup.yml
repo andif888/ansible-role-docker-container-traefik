@@ -36,6 +36,7 @@
 - name: docker_image pull {{ docker_image_traefik_name }}
   community.docker.docker_image:
     name: '{{ docker_image_traefik_name }}'
+    force_source: true
     source: pull
     # Select platform for pulling. If not specified, will pull whatever docker prefers.
     pull:
@@ -58,6 +59,7 @@
   community.docker.docker_container:
     name: "{{ docker_container_traefik_name }}"
     image: "{{ docker_container_traefik_image }}"
+    comparisons: "{{ docker_container_traefik_comparisons }}"
     state: "{{ docker_container_traefik_state | default('started') }}"
     recreate: "{{ docker_container_traefik_recreate | default('no') }}"
     restart: "{{ docker_container_traefik_restart | default('no') }}"
@@ -80,7 +82,6 @@
     networks_cli_compatible: "{{ docker_container_traefik_networks_cli_compatible | default('yes') }}"
     network_mode: "{{ docker_network_traefik_name }}"
     pull: "{{ docker_container_traefik_pull | default('no') }}"
-    purge_networks: "{{ docker_container_traefik_purge_networks | default('yes') }}"
     networks: "{{ docker_container_traefik_networks }}"
     published_ports: "{{ docker_container_traefik_ports | default(omit) }}"
 
